@@ -180,13 +180,13 @@ void CheckCap()
 void CapSetPump()
 {
   Display(5);
+  buzz(2);
   CapSetMotor(true);
   digitalWrite(air_pump, HIGH);
-  buzz(2);
   delay(CappingTime);
   digitalWrite(air_pump, LOW);
-  buzz(1);
   CapSetMotor(false);
+  buzz(1);
   noOfBottle++;
 }
 
