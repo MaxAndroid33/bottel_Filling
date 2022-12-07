@@ -2,54 +2,53 @@
 #include <LiquidCrystal.h>
 #include <Wire.h>
 
-
 // Initialise the LCD with the arduino. LiquidCrystal(rs, enable, d4, d5, d6, d7)
 LiquidCrystal lcd(A6, A7, 2, 3, 4, 5);
 
 //--------------------------------------------
 
-//RELAY PINS************
-#define air_pump  11 
-#define motor_conv  12
-#define pump_filling  10
-#define motor_cap  9
+// RELAY PINS************
+#define air_pump 11
+#define motor_conv 12
+#define pump_filling 10
+#define motor_cap 9
 
 //------------------------------------------
 
-//IR SENSOR PINS**************
-#define ir_start  8
-#define ir_fill  6
-#define ir_CAP  7
+// IR SENSOR PINS**************
+#define ir_start 8
+#define ir_fill 6
+#define ir_CAP 7
 //-----------------------------------------
 
-//BUZZER PIN**********************
-#define buz  A2
+// BUZZER PIN**********************
+#define buz A2
 //------------------------------------------
 
-
-//STEPPER MOTOR PINS********************
+// STEPPER MOTOR PINS********************
 #define en_stepper 13
-//################################
+// ################################
 const int StepX = A3; // X.STEP
-//const int DirX = A4;  // X.DIR 
-const int speedStepper =7000;
-//########################################
+// const int DirX = A4;  // X.DIR
+const int speedStepper = 7000;
+// ########################################
+const int fillingTime = 2000;
 
-
-//############## sensors
+// ############## sensors
 void CheckCap();
 void CheckBottol();
 void InitialPositionSet();
 void buzz();
-//############# motors
+// ############# motors
 void ConvMotor(boolean status);
 void CircleRotorStepper(int x);
 void CapSetMotor(boolean status);
 
-//############# pumps
-void FillPump(boolean status);
-void CapSetPump(boolean status);
-void setup() {
+// ############# pumps
+void FillPump();
+void CapSetPump();
+void setup()
+{
 
   pinMode(ir_fill, INPUT);
   pinMode(ir_start, INPUT);
@@ -59,39 +58,44 @@ void setup() {
   pinMode(pump_filling, OUTPUT);
   pinMode(motor_cap, OUTPUT);
   pinMode(buz, OUTPUT);
-  pinMode(StepX,OUTPUT);
+  pinMode(StepX, OUTPUT);
   pinMode(en_stepper, OUTPUT);
   Serial.begin(9600);
 
-   // set up the LCD's number of columns and rows:
-  lcd.begin(20,4);
+  // set up the LCD's number of columns and rows:
+  lcd.begin(20, 4);
   // Print a message to the LCD.
   lcd.print("fILLING PROJECT!");
   Serial.begin(9600);
 }
 
-void loop() {
- 
- InitialPositionSet();
- 
- 
+void loop()
+{
+
+  InitialPositionSet();
+  CircleRotorStepper(1);
+  CheckBottol();
+  FillPump();
+  
 }
 
-void buzz(){
-digitalWrite(buz,HIGH);
-delay(1000);
-digitalWrite(buz,LOW);
-
-
+void buzz()
+{
+  digitalWrite(buz, HIGH);
+  delay(1000);
+  digitalWrite(buz, LOW);
 }
-void InitialPositionSet(){
+
+
+void InitialPositionSet()
+{
   while (digitalRead(ir_start))
   {
     CircleRotorStepper(1);
   }
-   
-   CircleRotorStepper(0);
-   buzz();
+
+  CircleRotorStepper(0);
+  buzz();
 }
 
 
@@ -106,8 +110,28 @@ void CircleRotorStepper(int x)
     delayMicroseconds(speedStepper);
     digitalWrite(StepX, HIGH);
     delayMicroseconds(speedStepper);
-    
   }
   if (x == 0)
     digitalWrite(en_stepper, HIGH); // digitalWrite(dirPin,LOW);
+}
+
+
+void CheckBottol()
+{
+  while (digitalRead(ir_fill));
+
+  CircleRotorStepper(0);
+
+  buzz();
+}
+
+
+void FillPump()
+{
+  digitalWrite(pump_filling, LOW);
+  buzz();
+  delay(fillingTime);
+  digitalWrite(pump_filling, HIGH);
+  buzz();
+  CircleRotorStepper(1);
 }
