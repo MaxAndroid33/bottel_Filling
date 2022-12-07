@@ -3,7 +3,7 @@
 #include <Wire.h>
 
 // Initialise the LCD with the arduino. LiquidCrystal(rs, enable, d4, d5, d6, d7)
-LiquidCrystal lcd(A6, A7, 2, 3, 4, 5);
+LiquidCrystal lcd(A4, A5, 3, 2, 4, 5);
 
 //--------------------------------------------
 
@@ -75,11 +75,11 @@ void setup()
 void loop()
 {
   buzz(2);
-  InitialPositionSet();
+  // InitialPositionSet();
  
   
-  CheckBottol();
-  FillPump();
+  // CheckBottol();
+  // FillPump();
   CheckCap();
   CapSetPump();
 
