@@ -34,7 +34,7 @@ const int speedStepper = 7000;
 // ########################################
 const int CappingTime = 5000;
 const int fillingTime = 2000;
-
+int noOfBottle = 0;
 // ############## sensors
 void CheckCap();
 void CheckBottol();
@@ -49,7 +49,6 @@ void CapSetMotor(boolean status);
 void FillPump();
 void CapSetPump();
 void Display(int type);
-
 
 void setup()
 {
@@ -69,7 +68,7 @@ void setup()
   // set up the LCD's number of columns and rows:
   lcd.begin(20, 4);
   // Print a message to the LCD.
-  Display(1);
+
   Serial.begin(9600);
 }
 
@@ -86,49 +85,44 @@ void loop()
   // delay(2000);
   // ConvMotor(false);
   // delay(2000);
-  
 }
 
 void buzz(int mode)
 {
-  if(mode ==1){
+  if (mode == 1)
+  { Display(3);
     digitalWrite(buz, HIGH);
-  delay(1000);
-  digitalWrite(buz, LOW);
-  Display(3);
+    delay(1000);
+    digitalWrite(buz, LOW);
+    delay(500);
   }
-  else if (mode ==2)
+  else if (mode == 2)
   {
-   digitalWrite(buz, HIGH);
-  delay(100);
-  digitalWrite(buz, LOW);
-delay(100);
-  digitalWrite(buz, HIGH);
-  delay(100);
-  digitalWrite(buz, LOW);
+    digitalWrite(buz, HIGH);
+    delay(100);
+    digitalWrite(buz, LOW);
+    delay(100);
+    digitalWrite(buz, HIGH);
+    delay(100);
+    digitalWrite(buz, LOW);
   }
-  
- 
 }
 
-
 void InitialPositionSet()
-{ 
+{
+  Display(1);
   while (digitalRead(ir_start))
   {
     CircleRotorStepper(1);
   }
 
   CircleRotorStepper(0);
- ConvMotor(true);
- delay(3000);
- ConvMotor(false);
- 
-   buzz(2);
-  
- 
-}
+  ConvMotor(true);
+  delay(3000);
+  ConvMotor(false);
 
+  buzz(2);
+}
 
 void CircleRotorStepper(int x)
 {
@@ -146,53 +140,58 @@ void CircleRotorStepper(int x)
     digitalWrite(en_stepper, HIGH); // digitalWrite(dirPin,LOW);
 }
 
-
 void CheckBottol()
-{ Display(2);
-  while (digitalRead(ir_fill)){
+{
+  Display(2);
+  while (digitalRead(ir_fill))
+  {
     CircleRotorStepper(1);
   }
-  
+
   CircleRotorStepper(0);
 
   buzz(1);
 }
 
-
 void FillPump()
-{ Display(6);
+{
+  Display(6);
   digitalWrite(pump_filling, HIGH);
   buzz(2);
   delay(fillingTime);
   digitalWrite(pump_filling, LOW);
-  
+
   buzz(1);
   CircleRotorStepper(1);
 }
-void CheckCap(){
-Display(4);
-while(digitalRead(ir_CAP)){
-  CircleRotorStepper(1);
-}
+void CheckCap()
+{
+  Display(4);
+  while (digitalRead(ir_CAP))
+  {
+    CircleRotorStepper(1);
+  }
 
   CircleRotorStepper(0);
 
   buzz(1);
-
 }
 
-void CapSetPump(){
+void CapSetPump()
+{
   Display(5);
   CapSetMotor(true);
- digitalWrite(air_pump, HIGH);
-  buzz(1);
+  digitalWrite(air_pump, HIGH);
+  buzz(2);
   delay(CappingTime);
   digitalWrite(air_pump, LOW);
   buzz(1);
   CapSetMotor(false);
+  noOfBottle++;
 }
 
-void ConvMotor(boolean status){
+void ConvMotor(boolean status)
+{
 
   if (status)
     digitalWrite(motor_conv, HIGH);
@@ -200,11 +199,10 @@ void ConvMotor(boolean status){
   {
     digitalWrite(motor_conv, LOW);
   }
-  
-    
 }
 
-void CapSetMotor(boolean status){
+void CapSetMotor(boolean status)
+{
 
   if (status == true)
     digitalWrite(motor_cap, HIGH);
@@ -212,41 +210,51 @@ void CapSetMotor(boolean status){
     digitalWrite(motor_cap, LOW);
 }
 
-void Display(int type){
-
-switch (type)
+void Display(int type)
 {
-case 1:
-  lcd.print("  fILLING PROJECT!  ");
-  break;
-case 2:
-  lcd.clear();
-  lcd.print("  fILLING PROJECT!  ");
-  lcd.setCursor(4,1);
-  lcd.print("Checking Bottle ...");
+
+  switch (type)
+  {
+  case 1:
+    lcd.clear();
+    lcd.print("##fILLING PROJECT##");
+    lcd.setCursor(0, 1);
+    lcd.print("No Of Bottle:");
+    lcd.setCursor(14, 1);
+    lcd.print(noOfBottle);
     break;
-case 3:
-lcd.clear();
-  lcd.print("  fILLING PROJECT!  ");
-  lcd.setCursor(4,1);
-  lcd.print("  Complete  !!");
+  case 2:
+    lcd.clear();
+    lcd.print("##fILLING PROJECT##");
+    lcd.setCursor(0, 1);
+    lcd.print("Checking Bottle ...");
     break;
-case 4:
-lcd.clear();
-  lcd.print("  fILLING PROJECT!  ");
-  lcd.setCursor(4,1);
-  lcd.print("  Checking Cap ...");
+  case 3:
+    lcd.clear();
+    lcd.print("##fILLING PROJECT##");
+    lcd.setCursor(1, 1);
+    lcd.print("  Complete  !!");
     break;
-        case 6:
-lcd.clear();
-  lcd.print("  fILLING PROJECT!  ");
-  lcd.setCursor(4,1);
-  lcd.print("  Start Filling Water !!");
+  case 4:
+    lcd.clear();
+    lcd.print("##fILLING PROJECT##");
+    lcd.setCursor(0, 1);
+    lcd.print("  Checking Cap ...");
+    break;
+  case 5:
+    lcd.clear();
+    lcd.print("##fILLING PROJECT##");
+    lcd.setCursor(0, 2);
+    lcd.print("Start Capping Bottle.");
+    break;
+  case 6:
+    lcd.clear();
+    lcd.print("##fILLING PROJECT##");
+    lcd.setCursor(0, 2);
+    lcd.print("Start Filling Water.");
     break;
 
-default:
-  break;
-}
-
-
+  default:
+    break;
+  }
 }
