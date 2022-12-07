@@ -9,7 +9,7 @@ LiquidCrystal lcd(A6, A7, 2, 3, 4, 5);
 //--------------------------------------------
 
 //RELAY PINS************
-#define air_pump  12
+#define air_pump  12 
 #define motor_conv  11
 #define pump_filling  10
 #define motor_cap  9
@@ -29,20 +29,46 @@ LiquidCrystal lcd(A6, A7, 2, 3, 4, 5);
 
 //STEPPER MOTOR PINS********************
 #define en_stepper 13
-#define StepX A3
-#define DirX  A4
+//################################
+const int StepX = A3; // X.STEP
+const int DirX = A4;  // X.DIR
+//########################################
 int pulseWidthMicros = 1000;  // microseconds
 int millisBtwnSteps = 15000;
 
+//############## sensors
 void CheckCap();
 void CheckBottol();
 void InitialPositionSet();
-void CircleRotorStepper(int x);
-void FillPump(int status);
-void CapSetPump(int status);
 
+//############# motors
+void ConvMotor(boolean status);
+void CircleRotorStepper(int x);
+void CapSetMotor(boolean status);
+
+//############# pumps
+void FillPump(boolean status);
+void CapSetPump(boolean status);
 void setup() {
 
+  pinMode(ir_fill, INPUT);
+  pinMode(ir_start, INPUT);
+  pinMode(ir_CAP, INPUT);
+  pinMode(air_pump, OUTPUT);
+  pinMode(motor_conv, OUTPUT);
+  pinMode(pump_filling, OUTPUT);
+  pinMode(motor_cap, OUTPUT);
+  pinMode(buz, OUTPUT);
+  pinMode(StepX,OUTPUT);
+  pinMode(DirX,OUTPUT);
+  pinMode(en_stepper, OUTPUT);
+  Serial.begin(9600);
+
+   // set up the LCD's number of columns and rows:
+  lcd.begin(20,4);
+  // Print a message to the LCD.
+  lcd.print("fILLING PROJECT!");
+  
 }
 
 void loop() {
