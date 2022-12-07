@@ -32,13 +32,14 @@ const int StepX = A3; // X.STEP
 // const int DirX = A4;  // X.DIR
 const int speedStepper = 7000;
 // ########################################
+const int CappingTime = 5000;
 const int fillingTime = 2000;
 
 // ############## sensors
 void CheckCap();
 void CheckBottol();
 void InitialPositionSet();
-void buzz();
+void buzz(int mode);
 // ############# motors
 void ConvMotor(boolean status);
 void CircleRotorStepper(int x);
@@ -47,6 +48,8 @@ void CapSetMotor(boolean status);
 // ############# pumps
 void FillPump();
 void CapSetPump();
+
+
 void setup()
 {
 
@@ -71,31 +74,59 @@ void setup()
 
 void loop()
 {
-
+  buzz(2);
   InitialPositionSet();
-  CircleRotorStepper(1);
+ 
+  
   CheckBottol();
   FillPump();
+  CheckCap();
+  CapSetPump();
+
+  // ConvMotor(true);
+  // delay(2000);
+  // ConvMotor(false);
+  // delay(2000);
   
 }
 
-void buzz()
+void buzz(int mode)
 {
-  digitalWrite(buz, HIGH);
+  if(mode ==1){
+    digitalWrite(buz, HIGH);
   delay(1000);
   digitalWrite(buz, LOW);
+  }
+  else if (mode ==2)
+  {
+   digitalWrite(buz, HIGH);
+  delay(100);
+  digitalWrite(buz, LOW);
+delay(100);
+  digitalWrite(buz, HIGH);
+  delay(100);
+  digitalWrite(buz, LOW);
+  }
+  
+ 
 }
 
 
 void InitialPositionSet()
-{
+{ 
   while (digitalRead(ir_start))
   {
     CircleRotorStepper(1);
   }
 
   CircleRotorStepper(0);
-  buzz();
+ ConvMotor(true);
+ delay(2000);
+ ConvMotor(false);
+ 
+   buzz(1);
+  
+ 
 }
 
 
@@ -118,20 +149,63 @@ void CircleRotorStepper(int x)
 
 void CheckBottol()
 {
-  while (digitalRead(ir_fill));
+  while (digitalRead(ir_fill)){
+    CircleRotorStepper(1);
+  }
 
   CircleRotorStepper(0);
 
-  buzz();
+  buzz(1);
 }
 
 
 void FillPump()
 {
-  digitalWrite(pump_filling, LOW);
-  buzz();
-  delay(fillingTime);
   digitalWrite(pump_filling, HIGH);
-  buzz();
+  buzz(1);
+  delay(fillingTime);
+  digitalWrite(pump_filling, LOW);
+  buzz(1);
   CircleRotorStepper(1);
+}
+void CheckCap(){
+
+while(digitalRead(ir_CAP)){
+  CircleRotorStepper(1);
+}
+
+  CircleRotorStepper(0);
+
+  buzz(2);
+
+}
+
+void CapSetPump(){
+  CapSetMotor(true);
+ digitalWrite(air_pump, HIGH);
+  buzz(1);
+  delay(CappingTime);
+  digitalWrite(air_pump, LOW);
+  buzz(1);
+  CapSetMotor(false);
+}
+
+void ConvMotor(boolean status){
+
+  if (status)
+    digitalWrite(motor_conv, HIGH);
+  else if (!status)
+  {
+    digitalWrite(motor_conv, LOW);
+  }
+  
+    
+}
+
+void CapSetMotor(boolean status){
+
+  if (status == true)
+    digitalWrite(motor_cap, HIGH);
+  else
+    digitalWrite(motor_cap, LOW);
 }
