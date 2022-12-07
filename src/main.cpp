@@ -30,7 +30,7 @@ const int DirX = A4;
 int pulseWidthMicros = 1000;  // microseconds
 int millisBtwnSteps = 15000;
 
-
+void CircleRotorStepper(int x);
 // Initialise the LCD with the arduino. LiquidCrystal(rs, enable, d4, d5, d6, d7)
 LiquidCrystal lcd(A5, A6, 4, 5, 6, 7);
 
@@ -40,4 +40,22 @@ void setup() {
 
 void loop() {
  
+}
+
+
+
+void CircleRotorStepper(int x)
+{
+  if (x == 1)
+  {
+    digitalWrite(en_stepper, LOW);
+    // digitalWrite(dirPin,HIGH); // Enables the motor to move in a particular direction
+    // Makes 200 pulses for making one full cycle rotation
+    digitalWrite(StepX, HIGH);
+    delayMicroseconds(1000);
+    digitalWrite(StepX, LOW);
+    delayMicroseconds(1000);
+  }
+  if (x == 0)
+    digitalWrite(en_stepper, HIGH); // digitalWrite(dirPin,LOW);
 }
